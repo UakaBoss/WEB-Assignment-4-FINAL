@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style/nav.css">
+    <link rel="stylesheet" href="style/main.css">
+    <link rel="stylesheet" href="style/sign_up.css">
+    <link rel="stylesheet" href="style/footer.css">
+    <title>Sign Up Page</title>
+</head>
+
+<body>
+    <div class="navbar">
+        <a href="main_page.html">Main</a>
+        <a href="first.html">First API</a>
+        <a href="second.html">Second API</a>
+        <a href="third.html">Third API</a>
+        <a href="login.html">Login</a>
+        <a href="sign_up.html">Sign Up</a>
+    </div>
+
+    <div id="main">
+        <div class="sign-up-container">
+            <h2>Sign Up Form</h2>
+            <form action="/sign_up" method="POST">
+
+                <label for="username">Username: <span style="color: red;">*</span></label>
+                <input type="text" id="username" name="username" required>
+
+                <label for="fname">First Name:</label>
+                <input type="text" id="fname" name="fname">
+
+                <label for="lname">Last Name:</label>
+                <input type="text" id="lname" name="lname">
+
+                <label for="age">Age:</label>
+                <input type="number" id="age" name="age">
+
+                <label for="gender">Gender:</label>
+                <select id="gender" name="gender">
+                    <option value="">---</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                </select> <br><br>
+
+                <label for="country">Country:</label>
+                <input type="text" id="country" name="country">
+
+                <label for="password">Password: <span style="color: red;">*</span></label>
+                <input type="password" id="password" name="password" required>
+
+                <input type="submit" value="Submit" id="submit">
+            </form>
+            <p>Already have an account? <a href="/login.html">Login</a></p>
+        </div>
+    </div>
+
+    <footer>Ualikhan Kamarov | SE-2211</footer>
+</body>
+
+</html>

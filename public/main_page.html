@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style/main.css">
+    <link rel="stylesheet" href="style/nav.css">
+    <link rel="stylesheet" href="style/main_page.css">
+    <link rel="stylesheet" href="style/footer.css">
+    <title>Main</title>
+</head>
+
+<body>
+    <div class="navbar">
+        <a href="main_page.html">Main</a>
+        <a href="first.html">First API</a>
+        <a href="second.html">Second API</a>
+        <a href="third.html">Third API</a>
+        <a href="login.html">Login</a>
+        <a href="sign_up.html">Sign Up</a>
+    </div>
+
+    <div id="main">
+        <div class="container">
+            <a href="/admin_panel">
+                <button type="button">ADMIN PANEL</button>
+            </a>
+            <div class="container-upper">
+                <h1>MAIN</h1>
+            </div>
+            <div class="container-lower">
+                <div class="portfolio" id="portfolio-container">
+                    <!-- Portfolio items will be dynamically inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>Ualikhan Kamarov | SE-2211</footer>
+
+    <script>
+        // fetch
+        fetch('/portfolio')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(portfolioItems => {
+                const container = document.getElementById('portfolio-container');
+                if (!portfolioItems || !Array.isArray(portfolioItems)) {
+                    throw new Error('Invalid portfolio items data');
+                }
+                portfolioItems.forEach(item => {
+                    if (item.mainShow) {
+                        const itemElement = document.createElement('div');
+                        itemElement.classList.add('portfolio-item');
+                        console.log(item.images);
+                        let imagesHtml = '';
+                        imagesHtml += `<img src="${item.images}" alt="Portfolio Image">`;
+                        itemElement.innerHTML = `
+                        <div class="carousel">
+                            ${imagesHtml}
+                        </div>
+                        <h2>${item.name}</h2>
+                        <p>${item.description}</p>
+                    `;
+                        container.appendChild(itemElement);
+                    }
+                });
+            })
+            .catch(error => console.error('Error fetching portfolio items:', error));
+    </script>
+</body>
+
+</html>

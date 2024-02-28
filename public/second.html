@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style/nav.css">
+  <link rel="stylesheet" href="style/main.css">
+  <link rel="stylesheet" href="style/second.css">
+  <link rel="stylesheet" href="style/footer.css">
+  <title>Cryptocurrency Info Search API</title>
+</head>
+
+<body>
+  <div class="navbar">
+    <a href="main_page.html">Main</a>
+    <a href="first.html">First API</a>
+    <a href="second.html">Second API</a>
+    <a href="third.html">Third API</a>
+    <a href="login.html">Login</a>
+    <a href="sign_up.html">Sign Up</a>
+  </div>
+
+  <div id="main">
+    <div class="search-container">
+      <input type="text" id="cryptoInput" placeholder="Enter cryptocurrency name...">
+      <button onclick="fetchCryptoInfo()">Search</button>
+    </div>
+    <div id="cryptoInfoContainer" class="crypto-info"></div>
+  </div>
+
+  <footer>Ualikhan Kamarov | SE-2211</footer>
+
+  <script>
+    const cryptoInfoContainer = document.getElementById('cryptoInfoContainer');
+
+    function fetchCryptoInfo() {
+      const cryptoInput = document.getElementById('cryptoInput');
+      const cryptoName = cryptoInput.value.toLowerCase();
+      const apiUrl = `https://api.coingecko.com/api/v3/coins/${cryptoName}`;
+
+      fetch(apiUrl)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          const cryptoInfo = document.createElement('div');
+          cryptoInfo.className = 'crypto-info';
+          cryptoInfo.innerHTML = `
+          <h2>${data.name} (${data.symbol.toUpperCase()})</h2>
+          <p><strong>Price:</strong> $${data.market_data.current_price.usd}</p>
+          <p><strong>Market Cap:</strong> $${data.market_data.market_cap.usd.toLocaleString()}</p>
+          <p><strong>24h Change:</strong> ${data.market_data.price_change_percentage_24h.toFixed(2)}%</p>
+        `;
+          cryptoInfoContainer.appendChild(cryptoInfo);
+          cryptoInfoContainer.scrollTop = cryptoInfoContainer.scrollHeight;
+        })
+        .catch(error => {
+          console.error('Error fetching cryptocurrency data:', error);
+          const errorInfo = document.createElement('div');
+          errorInfo.className = 'crypto-info';
+          errorInfo.textContent = 'No cryptocurrency found with that name.';
+          cryptoInfoContainer.appendChild(errorInfo);
+          cryptoInfoContainer.scrollTop = cryptoInfoContainer.scrollHeight;
+        });
+    }
+  </script>
+
+</body>
+
+</html>

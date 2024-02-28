@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style/nav.css">
+  <link rel="stylesheet" href="style/main.css">
+  <link rel="stylesheet" href="style/first.css">
+  <link rel="stylesheet" href="style/footer.css">
+  <title>Country Information API</title>
+</head>
+
+<body>
+  <div class="navbar">
+    <a href="main_page.html">Main</a>
+    <a href="first.html">First API</a>
+    <a href="second.html">Second API</a>
+    <a href="third.html">Third API</a>
+    <a href="login.html">Login</a>
+    <a href="sign_up.html">Sign Up</a>
+  </div>
+
+  <div id="main">
+    <div class="search-container">
+      <input type="text" id="countryInput" placeholder="Enter country name...">
+      <button onclick="fetchCountryInfo()">Search</button>
+    </div>
+
+    <div id="countryInfoContainer" class="country-info"></div>
+  </div>
+
+  <footer>Ualikhan Kamarov | SE-2211</footer>
+
+  <script>
+    const countryInfoContainer = document.getElementById('countryInfoContainer');
+
+    function fetchCountryInfo() {
+      const countryInput = document.getElementById('countryInput');
+      const countryName = countryInput.value;
+      const apiUrl = `https://restcountries.com/v3.1/name/${countryName}`;
+
+      fetch(apiUrl)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (data.length === 0) {
+            const errorInfo = document.createElement('div');
+            errorInfo.className = 'country-info';
+            errorInfo.textContent = 'No country found with that name.';
+            countryInfoContainer.appendChild(errorInfo);
+            countryInfoContainer.scrollTop = countryInfoContainer.scrollHeight;
+          } else {
+            const country = data[0];
+            const countryInfo = document.createElement('div');
+            countryInfo.className = 'country-info';
+            countryInfo.innerHTML = `
+            <h2>${country.name.common}</h2>
+            <p><strong>Capital:</strong> ${country.capital || 'N/A'}</p>
+            <p><strong>Population:</strong> ${country.population.toLocaleString()}</p>
+            <p><strong>Currencies:</strong> ${Object.values(country.currencies).map(curr => curr.name).join(', ')}</p>
+            <p><strong>Languages:</strong> ${Object.values(country.languages).join(', ')}</p>
+          `;
+            countryInfoContainer.appendChild(countryInfo);
+            countryInfoContainer.scrollTop = countryInfoContainer.scrollHeight;
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching country data:', error);
+          const errorInfo = document.createElement('div');
+          errorInfo.className = 'country-info';
+          errorInfo.textContent = 'Error fetching data.';
+          countryInfoContainer.appendChild(errorInfo);
+          countryInfoContainer.scrollTop = countryInfoContainer.scrollHeight;
+        });
+    }
+  </script>
+</body>
+
+</html>

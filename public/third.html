@@ -1,0 +1,90 @@
+<!-- DmPQ4dBpdKMXsXEGq9ZYAOjC1D17KGZC2iSDj7rN -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style/nav.css">
+  <link rel="stylesheet" href="style/main.css">
+  <link rel="stylesheet" href="style/third.css">
+  <link rel="stylesheet" href="style/footer.css">
+  <title>NASA API Search</title>
+</head>
+
+<body>
+  <div class="navbar">
+    <a href="main_page.html">Main</a>
+    <a href="first.html">First API</a>
+    <a href="second.html">Second API</a>
+    <a href="third.html">Third API</a>
+    <a href="login.html">Login</a>
+    <a href="sign_up.html">Sign Up</a>
+  </div>
+
+  <div id="main">
+    <div class="search-container">
+      <input type="text" id="roverInput" placeholder="Enter Rover name (e.g., curiosity)...">
+      <input type="text" id="solInput" placeholder="Enter Martian sol (e.g., 1000)...">
+      <button onclick="fetchMarsRoverPhotos()">Search</button>
+    </div>
+    <div id="nasaInfoContainer" class="nasa-info-container"></div>
+  </div>
+
+
+  <footer>Ualikhan Kamarov | SE-2211</footer>
+
+  <script>
+    const nasaInfoContainer = document.getElementById('nasaInfoContainer');
+
+    function fetchMarsRoverPhotos() {
+      const roverInput = document.getElementById('roverInput');
+      const solInput = document.getElementById('solInput');
+      const roverName = roverInput.value;
+      const marsSol = solInput.value;
+      const apiKey = 'DmPQ4dBpdKMXsXEGq9ZYAOjC1D17KGZC2iSDj7rN';
+      const apiUrl = `https://api.nasa.gov/mars-photos/api/v1/rovers/${roverName}/photos?sol=${marsSol}&api_key=${apiKey}`;
+
+      fetch(apiUrl)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (data.photos.length === 0) {
+            const errorInfo = document.createElement('div');
+            errorInfo.className = 'nasa-info';
+            errorInfo.textContent = 'No photos found for the given criteria.';
+            nasaInfoContainer.appendChild(errorInfo);
+            nasaInfoContainer.scrollTop = nasaInfoContainer.scrollHeight;
+          } else {
+            data.photos.forEach(photo => {
+              const photoInfo = document.createElement('div');
+              photoInfo.className = 'nasa-info';
+              photoInfo.innerHTML = `
+              <h2>${photo.camera.full_name}</h2>
+              <img src="${photo.img_src}" alt="Mars Rover Photo">
+              <p><strong>Earth date:</strong> ${photo.earth_date}</p>
+            `;
+              nasaInfoContainer.appendChild(photoInfo);
+              nasaInfoContainer.scrollTop = nasaInfoContainer.scrollHeight;
+            });
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching Mars Rover photos:', error);
+          const errorInfo = document.createElement('div');
+          errorInfo.className = 'nasa-info';
+          errorInfo.textContent = 'Error fetching data.';
+          nasaInfoContainer.appendChild(errorInfo);
+          nasaInfoContainer.scrollTop = nasaInfoContainer.scrollHeight;
+        });
+    }
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style/nav.css">
+    <link rel="stylesheet" href="style/main.css">
+    <link rel="stylesheet" href="style/admin_panel.css">
+    <link rel="stylesheet" href="style/footer.css">
+    <title>Admin Panel</title>
+</head>
+
+<body>
+    <div class="navbar">
+        <a href="main_page.html">Main</a>
+        <a href="first.html">First API</a>
+        <a href="second.html">Second API</a>
+        <a href="third.html">Third API</a>
+        <a href="login.html">Login</a>
+        <a href="sign_up.html">Sign Up</a>
+    </div>
+
+    <div id="main">
+        <h1>ADMIN PANEL</h1>
+        <h2>GO BACK <a href="main_page.html">MAIN</a></h2>
+
+        <form action="/portfolio/add" method="POST" enctype="multipart/form-data">
+            <input type="file" name="images" accept="image/*" multiple required>
+            <input type="text" name="name" placeholder="Name" required>
+            <textarea name="description" placeholder="Description" required></textarea>
+            <button type="submit">Add Item</button>
+        </form>
+        <div class="portfolio" id="portfolio-container">
+            <!-- Portfolio items will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <footer>Ualikhan Kamarov | SE-2211</footer>
+
+    <script>
+        // Function to handle portfolio item deletion
+        const deleteItem = async (id) => {
+            try {
+                const response = await fetch(`/portfolio/${id}`, {
+                    method: 'DELETE'
+                });
+                const data = await response.json();
+                alert(data.message);
+                location.reload(); // Reload the page after deletion
+            } catch (error) {
+                console.error('Error deleting portfolio item:', error);
+                alert('Error deleting portfolio item');
+            }
+        };
+
+        // Function to handle portfolio item update
+        const updateItem = async (id) => {
+            const name = prompt('Enter the new name:');
+            const description = prompt('Enter the new description:');
+            if (name && description) {
+                try {
+                    const response = await fetch(`/portfolio/${id}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ name, description })
+                    });
+                    const data = await response.json();
+                    alert('Portfolio item updated successfully');
+                    location.reload(); // Reload the page after update
+                } catch (error) {
+                    console.error('Error updating portfolio item:', error);
+                    alert('Error updating portfolio item');
+                }
+            } else {
+                alert('Name and description are required');
+            }
+        };
+
+        // mainShow
+        const mainShow = async (id) => {
+            try {
+                const response = await fetch(`/portfolio/mainshow/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ mainShow: true })
+                });
+                const data = await response.json();
+                alert('Portfolio item showed on main page successfully');
+                location.reload(); // Reload the page after update
+            } catch (error) {
+                console.error('Error mainShow portfolio item:', error);
+                alert('Error mainShow portfolio item');
+            }
+        };
+
+        // mainShow
+        const mainClose = async (id) => {
+            try {
+                const response = await fetch(`/portfolio/mainclose/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ mainShow: false })
+                });
+                const data = await response.json();
+                alert('Portfolio item closed for main page successfully');
+                location.reload(); // Reload the page after update
+            } catch (error) {
+                console.error('Error mainClose portfolio item:', error);
+                alert('Error mainClose portfolio item');
+            }
+        };
+
+        // fetch
+        fetch('/portfolio')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(portfolioItems => {
+                const container = document.getElementById('portfolio-container');
+                if (!portfolioItems || !Array.isArray(portfolioItems)) {
+                    throw new Error('Invalid portfolio items data');
+                }
+                portfolioItems.forEach(item => {
+                    const itemElement = document.createElement('div');
+                    itemElement.classList.add('portfolio-item');
+                    console.log(item.images);
+                    let imagesHtml = '';
+                    imagesHtml += `<img src="${item.images}" alt="Portfolio Image">`;
+                    itemElement.innerHTML = `
+                <div class="carousel">
+                        ${imagesHtml}
+                    </div>
+                    <h2>${item.name}</h2>
+                    <p>${item.description}</p>
+                    <div class="buttons">
+                        <button onclick="mainShow('${item._id}')">Show on main</button>
+                        <button onclick="mainClose('${item._id}')">Close on main</button>
+                        <button onclick="updateItem('${item._id}', '${item.name}', '${item.description}')">Update</button>
+                        <button onclick="deleteItem('${item._id}')">Delete</button>
+                    </div>
+                `;
+                    container.appendChild(itemElement);
+                });
+            })
+            .catch(error => console.error('Error fetching portfolio items:', error));
+    </script>
+</body>
+
+</html>
